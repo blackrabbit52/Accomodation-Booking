@@ -12,10 +12,10 @@ public interface RoomRepository extends MongoRepository<Room, String> {
     @Override
     List<Room> findAll();
     Optional<Room> findById(String id);
-    List<Room> findByCity(String city);
-    List<Room> findByFurnished(boolean furnished);
-    List<Room> findByAmenitiesContaining(String amenity);
+    List<Room> findByLocation_City(String city);
+    List<Room> findByDetailsFurnished(boolean furnished);
+    List<Room> findByDetailsAmenitiesContaining(String amenity);
     List<Room> findByPricePerMonthGbpBetween(int minPrice, int maxPrice);
     List<Room> findByIsAvailable(boolean isAvailable);
-    List<Room> findByPostcode(String postcode);
+    List<Room> findByLocation_Postcode(String postcode);
 }

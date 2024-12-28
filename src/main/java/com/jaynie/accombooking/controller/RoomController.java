@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/room")
 public class RoomController {
+    @Autowired
     private final RoomService service;
 
     @Autowired
@@ -23,7 +24,6 @@ public class RoomController {
     public ResponseEntity<List<Room>> getAllRooms() {
         System.out.println("getAllRooms");
         return new ResponseEntity<>(service.findAllRooms(), HttpStatus.OK);
-
     }
 
     @GetMapping("/rooms/{city}")
@@ -47,16 +47,15 @@ public class RoomController {
         return new ResponseEntity<>(service.findRoomsByPriceRange(minPrice, maxPrice), HttpStatus.OK);
     }
 
-    @GetMapping("/furnished")
-    public ResponseEntity<List<Room>> findbyFurnished(@RequestParam boolean furnished) {
-        return new ResponseEntity<>(service.findRoomsByFurnished(furnished), HttpStatus.OK);
+    @GetMapping("/furnished/{furnished}")
+    public List<Room> getFurnishedRooms(@PathVariable boolean furnished) {
+        return new ResponseEntity<>(service.getFurnishedRooms(furnished), HttpStatus.OK).getBody();
     }
 
-    @GetMapping("/by-amenity")
-    public ResponseEntity<List<Room>> getRoomsByAmenity(@RequestParam String amenity) {
-        return new ResponseEntity<>(service.findRoomsByAmenity(amenity), HttpStatus.OK);
+    @GetMapping("/amenity/{amenity}")
+    public List<Room> getRoomsByAmenity(@PathVariable String amenity) {
+        return new ResponseEntity<>(service.getRoomsByAmenity(amenity), HttpStatus.OK).getBody();
     }
-
     @GetMapping("/by-postcode")
     public ResponseEntity<List<Room>> getRoomsByPostcode(@RequestParam("postcode") String postcode) {
         return new ResponseEntity<>(service.findRoomsByPostcode(postcode),HttpStatus.OK);

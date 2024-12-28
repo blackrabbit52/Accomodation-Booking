@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Finder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Global Dorm - Room Finder</h1>
+</header>
+
+<main>
+  <!-- Filter Section -->
+  <section id="filters">
+    <h2>Search for Rooms</h2>
+    <form id="searchForm">
+      <div class="filter-group">
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="Enter city name">
+      </div>
+      <div class="filter-group">
+        <label for="furnished">Furnished:</label>
+        <select id="furnished">
+          <option value="">Any</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="minPrice">Min Price:</label>
+        <input type="number" id="minPrice" placeholder="£">
+      </div>
+      <div class="filter-group">
+        <label for="maxPrice">Max Price:</label>
+        <input type="number" id="maxPrice" placeholder="£">
+      </div>
+      <button type="submit">Search</button>
+    </form>
+  </section>
+
+  <!-- Room Listings Section -->
+  <section id="roomList">
+    <h2>Available Rooms</h2>
+    <div id="roomsContainer">
+      <!-- Rooms will be dynamically rendered here -->
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2024 Global Dorm. All rights reserved.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

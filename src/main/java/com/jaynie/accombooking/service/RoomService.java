@@ -12,46 +12,38 @@ import java.util.Optional;
 public class RoomService {
     @Autowired
     private final RoomRepository roomRepository;
-
     public RoomService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
     }
 
     public List<Room> findAllRooms() {
-        return roomRepository.findAll();
-    }
+        return roomRepository.findAll();}
+
     public List<Room> getRoomsByCity(String city) {
-        return roomRepository.findByCity(city);
+        return roomRepository.findByLocation_City(city);}
+
+    public List<Room> getFurnishedRooms(boolean furnished) {
+        return roomRepository.findByDetailsFurnished(furnished);
     }
-    public List<Room> findRoomsByFurnished(boolean furnished) {
-        return roomRepository.findByFurnished(furnished);
-    }
-    public List<Room> findRoomsByAmenity(String amenity) {
-        return roomRepository.findByAmenitiesContaining(amenity);
+
+    public List<Room> getRoomsByAmenity(String amenity) {
+        return roomRepository.findByDetailsAmenitiesContaining(amenity);
     }
     public List<Room> findRoomsByPriceRange(int minPrice, int maxPrice) {
-        return roomRepository.findByPricePerMonthGbpBetween(minPrice, maxPrice);
-    }
+        return roomRepository.findByPricePerMonthGbpBetween(minPrice, maxPrice);}
+
     public List<Room> findAvailableRooms(boolean isAvailable) {
-        return roomRepository.findByIsAvailable(isAvailable);
-    }
+        return roomRepository.findByIsAvailable(isAvailable);}
 
-    // Find rooms by postcode
     public List<Room> findRoomsByPostcode(String postcode) {
-        return roomRepository.findByPostcode(postcode);
-    }
+        return roomRepository.findByLocation_Postcode(postcode);}
 
-    // Get room by ID
     public Optional<Room> getRoomById(String id) {
-        return roomRepository.findById(id);
-    }
+        return roomRepository.findById(id);}
 
-    // Add a new room
     public Room saveRoom(Room room) {
-        return roomRepository.save(room);
-    }
+        return roomRepository.save(room);}
 
-    // Delete a room by ID
     public void deleteRoomById(String id) {
         if (roomRepository.existsById(id)) {roomRepository.deleteById(id);} else {
             throw new RuntimeException("Room not found with ID: " + id);
