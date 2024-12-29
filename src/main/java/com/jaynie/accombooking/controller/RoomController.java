@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/room")
+
 public class RoomController {
     @Autowired
     private final RoomService service;
@@ -22,7 +23,6 @@ public class RoomController {
 
     @GetMapping("/all")
     public ResponseEntity<List<Room>> getAllRooms() {
-        System.out.println("getAllRooms");
         return new ResponseEntity<>(service.findAllRooms(), HttpStatus.OK);
     }
 
