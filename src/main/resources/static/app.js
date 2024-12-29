@@ -1,62 +1,117 @@
-// Base API URL
-//const API_URL = "http://localhost:8080/rooms";
+/// Base URL for the API
+const BASE_URL = "http://localhost:8080/api/rooms";
 
-// Fetch rooms and render them
-async function fetchRooms(filters = {}) {
-    let query = "?";
-    for (const key in filters) {
-        if (filters[key]) query += `${key}=${filters[key]}&`;
-    }
+// State variables for pagination and filters
+let currentPage = 1;
+let filters = {
+    search: "",
+    minPrice: 0,
+    maxPrice: 2000,
+    furnished: false,
+    billsIncluded: false,
+};
 
+// Function to fetch rooms from the API
+async function fetchRooms() {
     try {
-        const response = await fetch(API_URL + query);
-        const rooms = await response.json();
-        renderRooms(rooms);
+        // Build the query string based on filters and pagination
+        const queryParams = new URLSearchParams({
+            page: currentPage,
+            search: filters.search,
+            minPrice: filters.minPrice,
+            maxPrice: filters.maxPrice,
+            furnished: filters.furnished,
+            billsIncluded: filters.billsIncluded,
+        });
+        const response = await fetch(`${BASE_URL}?${queryParams}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch data from server");
+        }
+        return await response.json();
     } catch (error) {
         console.error("Error fetching rooms:", error);
-        document.getElementById("roomsContainer").innerHTML = `
-            <p>Error loading rooms. Please try again later.</p>
-        `;
+        return { rooms: [], totalPages: 1 };
     }
 }
 
-// Render rooms
+// Function to render room cards
 function renderRooms(rooms) {
-    const container = document.getElementById("roomsContainer");
-    container.innerHTML = ""; // Clear previous results
+    const roomList = document.getElementById("room-list");
+    roomList.innerHTML = ""; // Clear existing rooms
 
     if (rooms.length === 0) {
-        container.innerHTML = "<p>No rooms found.</p>";
+        roomList.innerHTML = "<p>No rooms found.</p>";
         return;
     }
 
-    rooms.forEach(room => {
+    rooms.forEach((room) => {
         const roomCard = document.createElement("div");
-        roomCard.classList.add("room");
-
+        roomCard.className = "room-card";
         roomCard.innerHTML = `
-            <h3>${room.name}</h3>
-            <p><strong>City:</strong> ${room.location?.city || "N/A"}</p>
-            <p><strong>Price:</strong> £${room.pricePerMonthGbp}</p>
-            <p><strong>Furnished:</strong> ${room.details?.furnished ? "Yes" : "No"}</p>
-            <p><strong>Languages:</strong> ${room.spokenLanguages?.join(", ") || "N/A"}</p>
+            <img src="${room.image || 'placeholder.jpg'}" alt="${room.name}">
+            <div class="room-card-content">
+                <h3>${room.name}</h3>
+                <p>${room.location.city}, ${room.location.postcode}</p>
+                <p><strong>£${room.pricePerMonthGbp}/month</strong></p>
+            </div>
         `;
-
-        container.appendChild(roomCard);
+        roomList.appendChild(roomCard);
     });
 }
 
-// Handle form submission
-document.getElementById("searchForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const city = document.getElementById("city").value;
-    const furnished = document.getElementById("furnished").value;
-    const minPrice = document.getElementById("minPrice").value;
-    const maxPrice = document.getElementById("maxPrice").value;
+// Function to handle pagination buttons
+function handlePagination(totalPages) {
+    const prevButton = document.getElementById("prev-page");
+    const nextButton = document.getElementById("next-page");
 
-    const filters = { city, furnished, minPrice, maxPrice };
-    fetchRooms(filters);
-});
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= totalPages;
 
-// Initial fetch
-fetchRooms();
+    prevButton.onclick = async () => {
+        if (currentPage > 1) {
+            currentPage--;
+            const data = await fetchRooms();
+            renderRooms(data.rooms);
+            handlePagination(data.totalPages);
+        }
+    };
+
+    nextButton.onclick = async () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            const data = await fetchRooms();
+            renderRooms(data.rooms);
+            handlePagination(data.totalPages);
+        }
+    };
+}
+
+// Function to apply filters
+async function applyFilters() {
+    filters.search = document.getElementById("search").value.toLowerCase();
+    filters.minPrice = 0; // Default min price
+    filters.maxPrice = document.getElementById("price-range").value || 2000;
+    filters.furnished = document.getElementById("furnished").checked;
+    filters.billsIncluded = document.getElementById("bills-included").checked;
+
+    // Reset to the first page
+    currentPage = 1;
+
+    // Fetch and render filtered data
+    const data = await fetchRooms();
+    renderRooms(data.rooms);
+    handlePagination(data.totalPages);
+}
+
+// Attach event listeners for filters and search
+document.getElementById("search").addEventListener("input", applyFilters);
+document.getElementById("price-range").addEventListener("change", applyFilters);
+document.getElementById("furnished").addEventListener("change", applyFilters);
+document.getElementById("bills-included").addEventListener("change", applyFilters);
+
+// Initial Load
+(async function initialize() {
+    const data = await fetchRooms();
+    renderRooms(data.rooms);
+    handlePagination(data.totalPages);
+})();
