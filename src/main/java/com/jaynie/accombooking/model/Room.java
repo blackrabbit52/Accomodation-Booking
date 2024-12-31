@@ -12,9 +12,9 @@ public class Room {
     private Location location;
     private Details details;
     private boolean isAvailable;
-    private String availabilityDate;
-    private double pricePerMonthGbp;
-    private List<String> spokenLanguages;
+    private String availability_date;
+    private int price_per_month_gbp;
+    private List<String> spoken_languages;
 
     public Room() {}
     public String getId() { return id; }
@@ -32,14 +32,14 @@ public class Room {
     public boolean isAvailable() { return isAvailable; }
     public void setAvailable(boolean available) { isAvailable = available; }
 
-    public String getAvailabilityDate() { return availabilityDate; }
-    public void setAvailabilityDate(String availabilityDate) { this.availabilityDate = availabilityDate; }
+    public String getAvailability_date() { return availability_date; }
+    public void setAvailability_date(String availability_date) { this.availability_date = availability_date; }
 
-    public List<String> getSpokenLanguages() { return spokenLanguages; }
-    public void setSpokenLanguages(List<String> spokenLanguages) { this.spokenLanguages = spokenLanguages; }
+    public List<String> getSpokenLanguages() { return spoken_languages; }
+    public void setSpokenLanguages(List<String> spokenLanguages) { this.spoken_languages = spokenLanguages; }
 
-    public double getPricePerMonthGbp() {return pricePerMonthGbp;}
-    public void setPricePerMonthGbp(double pricePerMonthGbp) {this.pricePerMonthGbp = pricePerMonthGbp;}
+    public int getPrice_per_month_gbp() {return price_per_month_gbp;}
+    public void setPrice_per_month_gbp(int price_per_month_gbp) {this.price_per_month_gbp = price_per_month_gbp;}
 
     public static class Location {
         private String city;
@@ -60,10 +60,10 @@ public class Room {
 
     public static class Details {
         private Boolean furnished;
-        private Boolean liveInLandlord;
-        private Boolean billsIncluded;
-        private Boolean bathroomShared;
-        private int sharedWith;
+        private Boolean live_in_landlord;
+        private Boolean bills_included;
+        private Boolean bathroom_shared;
+        private int shared_with;
         private List<String> amenities;
 
         public Details() {}
@@ -71,17 +71,17 @@ public class Room {
         public Boolean isFurnished() { return furnished; }
         public void setFurnished(Boolean furnished) { this.furnished = furnished; }
 
-        public Boolean getLiveInLandlord() { return liveInLandlord; }
-        public void setLiveInLandlord(Boolean liveInLandlord) { this.liveInLandlord = liveInLandlord; }
+        public Boolean getLiveInLandlord() { return live_in_landlord; }
+        public void setLiveInLandlord(Boolean liveInLandlord) { this.live_in_landlord = liveInLandlord; }
 
-        public Boolean getBillsIncluded() { return billsIncluded; }
-        public void setBillsIncluded(Boolean billsIncluded) { this.billsIncluded = billsIncluded; }
+        public Boolean getBills_included() { return bills_included; }
+        public void setBills_included(Boolean bills_included) { this.bills_included = bills_included; }
 
-        public Boolean getBathroomShared() { return bathroomShared; }
-        public void setBathroomShared(Boolean bathroomShared) { this.bathroomShared = bathroomShared; }
+        public Boolean getBathroom_shared() { return bathroom_shared; }
+        public void setBathroom_shared(Boolean bathroom_shared) { this.bathroom_shared = bathroom_shared; }
 
-        public int getSharedWith() { return sharedWith; }
-        public void setSharedWith(int sharedWith) { this.sharedWith = sharedWith; }
+        public int getShared_with() { return shared_with; }
+        public void setShared_with(int shared_with) { this.shared_with = shared_with; }
 
         public List<String> getAmenities() { return amenities; }
         public void setAmenities(List<String> amenities) { this.amenities = amenities; }

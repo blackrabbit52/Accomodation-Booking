@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/room")
@@ -15,7 +16,6 @@ import java.util.List;
 public class RoomController {
     @Autowired
     private final RoomService service;
-
     @Autowired
     public RoomController(RoomService service) {
         this.service = service;
@@ -26,14 +26,16 @@ public class RoomController {
         return new ResponseEntity<>(service.findAllRooms(), HttpStatus.OK);
     }
 
-    @GetMapping("/rooms/{city}")
-    public ResponseEntity<List<Room>> getRoomsByCity(@PathVariable String city) {
-        return new ResponseEntity<>(service.getRoomsByCity(city), HttpStatus.OK);
+    @GetMapping("/city/{city}")
+    public ResponseEntity<List<Room>> getRoomsByCity(@PathVariable("city") String city) {
+        List<Room> byCity = service.getRoomsByCity(city);
+        return ResponseEntity.ok(byCity);
     }
 
-    @GetMapping("/rooms/{id}")
-    public ResponseEntity<Room> getRoomById(@PathVariable String id) {
-        return service.getRoomById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Optional<Room>> getRoomById(@PathVariable("id") String id) {
+        Optional<Room> byId = service.getRoomById(id);
+        return ResponseEntity.ok(byId);
     }
 
     @GetMapping("/available")

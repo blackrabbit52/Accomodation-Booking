@@ -30,7 +30,7 @@ public class RoomService {
         return roomRepository.findByDetailsAmenitiesContaining(amenity);
     }
     public List<Room> findRoomsByPriceRange(int minPrice, int maxPrice) {
-        return roomRepository.findByPricePerMonthGbpBetween(minPrice, maxPrice);}
+        return roomRepository.findByPrice_per_month_gbpBetween(minPrice, maxPrice);}
 
     public List<Room> findAvailableRooms(boolean isAvailable) {
         return roomRepository.findByIsAvailable(isAvailable);}
