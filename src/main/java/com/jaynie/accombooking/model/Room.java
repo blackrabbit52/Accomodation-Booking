@@ -15,6 +15,8 @@ public class Room {
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
+    private String weather;
+
 
     public Room() {}
     public String getId() { return id; }
@@ -40,6 +42,9 @@ public class Room {
 
     public int getPrice_per_month_gbp() {return price_per_month_gbp;}
     public void setPrice_per_month_gbp(int price_per_month_gbp) {this.price_per_month_gbp = price_per_month_gbp;}
+
+   public String getWeather() { return weather; }
+    public void setWeather(String weather) { this.weather = weather; }
 
     public static class Location {
         private String city;

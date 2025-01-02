@@ -2,6 +2,7 @@ package com.jaynie.accombooking.controller;
 
 import com.jaynie.accombooking.model.Room;
 import com.jaynie.accombooking.service.RoomService;
+//import com.jaynie.accombooking.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,13 @@ import java.util.Optional;
 public class RoomController {
     @Autowired
     private final RoomService service;
+//    private  WeatherService weatherService;
+
     @Autowired
     public RoomController(RoomService service) {
         this.service = service;
+//        this.weatherService = weatherService;
+
     }
 
     @GetMapping("/all")
@@ -44,7 +49,7 @@ public class RoomController {
         return ResponseEntity.ok(availableRooms);
     }
 
-    @GetMapping("/by-price")
+    @GetMapping("/price")
     public ResponseEntity<List<Room>> getRoomsByPrice(@RequestParam int minPrice, @RequestParam int maxPrice) {
         return new ResponseEntity<>(service.findRoomsByPriceRange(minPrice, maxPrice), HttpStatus.OK);
     }
@@ -58,7 +63,7 @@ public class RoomController {
     public List<Room> getRoomsByAmenity(@PathVariable String amenity) {
         return new ResponseEntity<>(service.getRoomsByAmenity(amenity), HttpStatus.OK).getBody();
     }
-    @GetMapping("/by-postcode")
+    @GetMapping("/postcode")
     public ResponseEntity<List<Room>> getRoomsByPostcode(@RequestParam("postcode") String postcode) {
         return new ResponseEntity<>(service.findRoomsByPostcode(postcode),HttpStatus.OK);
     }
