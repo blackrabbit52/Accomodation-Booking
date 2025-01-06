@@ -6,18 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class RoomService {
     @Autowired
     private final RoomRepository roomRepository;
-    public RoomService(RoomRepository roomRepository) {
+    private final WeatherService weatherService;
+
+    public RoomService(RoomRepository roomRepository, WeatherService weatherService) {
         this.roomRepository = roomRepository;
+        this.weatherService = weatherService;
     }
 
     public List<Room> findAllRooms() {
-        return roomRepository.findAll();}
+        return roomRepository.findAll();
+    }
 
     public List<Room> getRoomsByCity(String city) {
         return roomRepository.findByLocation_City(city);}
@@ -32,8 +37,8 @@ public class RoomService {
     public List<Room> findRoomsByPriceRange(int minPrice, int maxPrice) {
         return roomRepository.findByPrice_per_month_gbpBetween(minPrice, maxPrice);}
 
-    public List<Room> findAvailableRooms(boolean isAvailable) {
-        return roomRepository.findByIsAvailable(isAvailable);}
+    public List<Room> findAvailableRooms() {
+        return roomRepository.findByAvailableTrue();}
 
     public List<Room> findRoomsByPostcode(String postcode) {
         return roomRepository.findByLocation_Postcode(postcode);}
@@ -49,6 +54,20 @@ public class RoomService {
             throw new RuntimeException("Room not found with ID: " + id);
         }
     }
+
+    public List<Room> findWeatherByCity(String city) {
+        List<Room> rooms = roomRepository.findByLocation_City(city);
+        if (rooms.isEmpty()) {
+            throw new RuntimeException("No rooms found for city: " + city);
+        }
+        Map<String, Object> weather = weatherService.getWeather(city);
+        for (Room room : rooms) {
+            room.setWeather(weather);
+        }
+        return rooms;
+    }
+
+
 
     // Update an existing room
 //    public Room updateRoom(String id, Room updatedRoom) {

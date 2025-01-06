@@ -20,6 +20,8 @@ public interface RoomRepository extends MongoRepository<Room, String> {
     @Query("{'price_per_month_gbp': {$gte: ?0, $lte: ?1}}")
     List<Room> findByPrice_per_month_gbpBetween(int minPrice, int maxPrice);
 
-    List<Room> findByIsAvailable(boolean isAvailable);
+    @Query("{ 'available' : true }")
+    List<Room> findByAvailableTrue();
     List<Room> findByLocation_Postcode(String postcode);
+
 }

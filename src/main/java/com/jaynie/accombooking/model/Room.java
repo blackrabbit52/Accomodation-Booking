@@ -3,6 +3,7 @@ package com.jaynie.accombooking.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "rooms")
 public class Room {
@@ -11,11 +12,11 @@ public class Room {
     private String name;
     private Location location;
     private Details details;
-    private boolean isAvailable;
+    private boolean available;
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
-    private String weather;
+    private Map<String, Object> weather;
 
 
     public Room() {}
@@ -31,8 +32,8 @@ public class Room {
     public Details getDetails() { return details; }
     public void setDetails(Details details) { this.details = details; }
 
-    public boolean isAvailable() { return isAvailable; }
-    public void setAvailable(boolean available) { isAvailable = available; }
+    public boolean getAvailable() { return available; }
+    public void setAvailable(boolean available) { available = available; }
 
     public String getAvailability_date() { return availability_date; }
     public void setAvailability_date(String availability_date) { this.availability_date = availability_date; }
@@ -43,8 +44,10 @@ public class Room {
     public int getPrice_per_month_gbp() {return price_per_month_gbp;}
     public void setPrice_per_month_gbp(int price_per_month_gbp) {this.price_per_month_gbp = price_per_month_gbp;}
 
-   public String getWeather() { return weather; }
-    public void setWeather(String weather) { this.weather = weather; }
+    public Map<String, Object> getWeather() {return weather;}
+    public void setWeather(Map<String, Object> weather) {this.weather = weather;}
+
+
 
     public static class Location {
         private String city;

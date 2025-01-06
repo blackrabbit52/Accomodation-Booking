@@ -3,6 +3,7 @@ package com.jaynie.accombooking.controller;
 import com.jaynie.accombooking.model.Room;
 import com.jaynie.accombooking.service.RoomService;
 //import com.jaynie.accombooking.service.WeatherService;
+import com.jaynie.accombooking.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,12 @@ import java.util.Optional;
 public class RoomController {
     @Autowired
     private final RoomService service;
-//    private  WeatherService weatherService;
+    private WeatherService weatherService;
 
     @Autowired
     public RoomController(RoomService service) {
         this.service = service;
-//        this.weatherService = weatherService;
+        this.weatherService = weatherService;
 
     }
 
@@ -44,8 +45,8 @@ public class RoomController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<Room>> getAvailableRooms(@RequestParam boolean isAvailable) {
-        List<Room> availableRooms = service.findAvailableRooms(isAvailable);
+    public ResponseEntity<List<Room>> getAvailableRooms( ) {
+        List<Room> availableRooms = service.findAvailableRooms( );
         return ResponseEntity.ok(availableRooms);
     }
 
@@ -79,6 +80,14 @@ public class RoomController {
         service.deleteRoomById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/weather/{city}")
+    public ResponseEntity<List<Room>> getRoomsWithWeather(@PathVariable String city) {
+        List<Room> rooms = service.findWeatherByCity(city);
+        return ResponseEntity.ok(rooms);
+    }
+
+
 
 //    @PutMapping("/{id}")
 //    public ResponseEntity<Room> updateRoom(@PathVariable String id, @RequestBody Room updatedRoom) {

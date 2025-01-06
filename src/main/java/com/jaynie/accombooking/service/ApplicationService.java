@@ -32,7 +32,7 @@ public class ApplicationService {
         Room room = roomRepository.findById(applicationRequest.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
         // Check if the room is available
-        if (!room.isAvailable()) {
+        if (!room.getAvailable()) {
             throw new IllegalStateException("Room is not available");
         }
         // Create a new application
