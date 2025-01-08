@@ -24,7 +24,6 @@ public class RoomController {
     public RoomController(RoomService service) {
         this.service = service;
         this.weatherService = weatherService;
-
     }
 
     @GetMapping("/all")
@@ -41,6 +40,10 @@ public class RoomController {
     @GetMapping("/id/{id}")
     public ResponseEntity<Optional<Room>> getRoomById(@PathVariable("id") String id) {
         Optional<Room> byId = service.getRoomById(id);
+        if (byId.isPresent()) {
+           // service.findWeatherByCity(byId.location.city);
+        }
+        //service.findWeatherByCity(byId.location.city);
         return ResponseEntity.ok(byId);
     }
 

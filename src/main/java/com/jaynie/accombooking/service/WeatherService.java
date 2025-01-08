@@ -22,7 +22,7 @@ public class WeatherService {
     }
 
     public static Map<String, Object> getWeather(String city) {
-        String url = String.format("https://api.openweathermap.org/data/2.5/weather", weatherApiUrl, city, weatherApiKey);
+        String url = "api.openweathermap.org/data/2.5/forecast?q=London&appid=2049cebde0b13d6ea8c639790e052b65";
 
         ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
         if (response.getStatusCode() == HttpStatus.OK) {
@@ -31,6 +31,8 @@ public class WeatherService {
 
             if (body != null) {
                 Map<String, Object> main = (Map<String, Object>) body.get("main");
+                System.out.println(main);
+
                 if (main != null) {
                     weatherData.put("temperature", main.get("temp"));
                 }
