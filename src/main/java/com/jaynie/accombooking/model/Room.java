@@ -1,6 +1,7 @@
 package com.jaynie.accombooking.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,10 @@ public class Room {
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
-    private Map<String, Object> weather;
+    @Transient
+    private Map<String, Object> distance;
+    @Transient
+    private Weather weather;
 
 
     public Room() {}
@@ -26,7 +30,7 @@ public class Room {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public Location getLocation() { return location; }
+    public String getLocation() { return location.city; }
     public void setLocation(Location location) { this.location = location; }
 
     public Details getDetails() { return details; }
@@ -44,10 +48,8 @@ public class Room {
     public int getPrice_per_month_gbp() {return price_per_month_gbp;}
     public void setPrice_per_month_gbp(int price_per_month_gbp) {this.price_per_month_gbp = price_per_month_gbp;}
 
-    public Map<String, Object> getWeather() {return weather;}
-    public void setWeather(Map<String, Object> weather) {this.weather = weather;}
-
-
+    public Weather getWeather() { return weather; }
+    public void setWeather(Weather weather) { this.weather = weather; }
 
     public static class Location {
         private String city;
@@ -64,6 +66,22 @@ public class Room {
 
         public String getPostcode() { return postcode; }
         public void setPostcode(String postcode) { this.postcode = postcode; }
+    }
+
+    public static class Weather{
+        private String temperature;
+        private String humidity;
+        private String description;
+        private String main;
+
+        public String getTemperature() { return temperature; }
+        public void setTemperature(String temperature) { this.temperature = temperature; }
+        public String getHumidity() { return humidity; }
+        public String setHumidity(String humidity) { this.humidity = humidity; return humidity; }
+        public String getDescription() { return description; }
+        public void setDescription(String description) { this.description = description; }
+        public String getMain() { return main; }
+        public void setMain(String main) { this.main = main; }
     }
 
     public static class Details {

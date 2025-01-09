@@ -55,16 +55,13 @@ public class RoomService {
         }
     }
 
-    public List<Room> findWeatherByCity(String city) {
+    public Map<String, Object> findWeatherByCity(String city) {
         List<Room> rooms = roomRepository.findByLocation_City(city);
         if (rooms.isEmpty()) {
             throw new RuntimeException("No rooms found for city: " + city);
         }
         Map<String, Object> weather = weatherService.getWeather(city);
-        for (Room room : rooms) {
-            room.setWeather(weather);
-        }
-        return rooms;
+        return weather;
     }
 
 

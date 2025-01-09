@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -38,13 +40,34 @@ public class RoomController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<Optional<Room>> getRoomById(@PathVariable("id") String id) {
+    public ResponseEntity<Room> getRoomById(@PathVariable("id") String id) {
         Optional<Room> byId = service.getRoomById(id);
+
         if (byId.isPresent()) {
-           // service.findWeatherByCity(byId.location.city);
+            Room room = byId.get();
+            String city = room.getLocation();
+
+            // Fetch weather data from API
+            Map<String, Object> weatherData = service.findWeatherByCity(city);
+
+            System.out.println("Weather data in RoomController: " + weatherData); // Debugging
+
+            if (weatherData != null && !weatherData.isEmpty()) {
+                // Convert map to Weather object
+                Room.Weather weather = new Room.Weather();
+                weather.setTemperature((String) weatherData.get("temperature"));
+                weather.setHumidity((String) weatherData.get("humidity"));
+                weather.setDescription((String) weatherData.get("description"));
+                weather.setMain((String) weatherData.get("main"));
+
+                // Set the converted Weather object into Room
+                room.setWeather(weather);
+            }
+
+            return new ResponseEntity<>(room, HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        //service.findWeatherByCity(byId.location.city);
-        return ResponseEntity.ok(byId);
     }
 
     @GetMapping("/available")
@@ -84,11 +107,11 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/weather/{city}")
-    public ResponseEntity<List<Room>> getRoomsWithWeather(@PathVariable String city) {
-        List<Room> rooms = service.findWeatherByCity(city);
-        return ResponseEntity.ok(rooms);
-    }
+//    @GetMapping("/weather/{city}")
+//    public ResponseEntity<List<Room>> getRoomsWithWeather(@PathVariable String city) {
+//        List<Room> rooms = service.findWeatherByCity(weather);
+//        return ResponseEntity.ok(rooms);
+//    }
 
 
 
