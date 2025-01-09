@@ -1,38 +1,22 @@
-/* General Styles */
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    color: #000080; /* Navy Blue */
-    background-color: #f0f8ff; /* Light Blue */
+    background-color: #ffe6f0; /* Light pastel pink */
+    text-align: center;
+    color: #5a5a5a;
 }
 
-h1, h2, h3 {
-    margin: 0;
-    color: #000080;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Header */
+/*  Header */
 .header {
-    background-color: #000080; /* Navy Blue */
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
+    background: #f8a5c2;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 1000;
-}
-
-.header .logo h1 {
-    font-size: 24px;
 }
 
 .navbar ul {
@@ -40,114 +24,224 @@ h1, h2, h3 {
     padding: 0;
     margin: 0;
     display: flex;
-    gap: 15px;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar ul li {
+    display: inline-block;
+    margin: 0 15px;
 }
 
 .navbar ul li a {
     color: white;
+    font-size: 18px;
     text-decoration: none;
     font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: 0.3s;
 }
 
 .navbar ul li a:hover {
-    background-color: #1e90ff; /* Light Blue Hover */
+    text-decoration: underline;
 }
 
-/* Hero Section */
+/*  Hero Section */
 .hero {
-    background: linear-gradient(to bottom, #1e90ff, #f0f8ff); /* Gradient */
-    color: white;
+    position: relative;
     text-align: center;
-    padding: 60px 20px;
+    background: linear-gradient(to bottom, #f8c4d9, #fad0e6); /* Light pink gradient */
+    padding: 100px 20px;
+    color: #ffffff;
 }
 
-.hero h2 {
-    font-size: 36px;
-    margin-bottom: 10px;
+/* Create white banner effect */
+.hero-banner {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    max-width: 80%;
+    text-align: center;
 }
 
-.hero p {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-.hero .search-form {
+/* Fix search bar */
+.search-form {
     display: flex;
     justify-content: center;
     gap: 10px;
+    margin-top: 15px;
 }
 
-.hero .search-form input {
+.search-form input {
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid white;
-    outline: none;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    width: 250px;
+    font-size: 16px;
 }
 
-.hero .search-form button {
+.search-form button {
     padding: 10px 20px;
-    background-color: white;
-    color: #000080;
+    border-radius: 20px;
+    background-color: #e75a7c;
+    color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-size: 16px;
+    transition: 0.3s;
 }
 
-.hero .search-form button:hover {
-    background-color: #f0f8ff;
+.search-form button:hover {
+    background-color: #d1486f;
 }
 
-/* Features Section */
+/*  Features Section */
 .features {
-    text-align: center;
-    background-color: #f0f8ff;
     padding: 40px 20px;
+    background-color: #ffffff;
 }
 
-.features .feature-cards {
+.features h2 {
+    color: #ff69b4;
+}
+
+.feature-cards {
     display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.features .feature-card {
-    text-align: center;
-    width: 30%;
-    background-color: white;
-    border-radius: 10px;
+.feature-card {
+    background: #ffccda;
     padding: 20px;
+    border-radius: 10px;
+    width: 250px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-.features .feature-card i {
-    font-size: 40px;
-    color: #1e90ff;
-    margin-bottom: 10px;
+.feature-card i {
+    font-size: 30px;
+    color: #ff1493;
 }
 
-/* Rooms Section */
+.feature-card h3 {
+    font-size: 20px;
+}
+
+/*  Available Rooms */
 .rooms {
     padding: 40px 20px;
-    background-color: white;
-    text-align: center;
+    background: #ffe6f0;
 }
 
+.rooms h2 {
+    color: #ff69b4;
+}
+
+.filters {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters input,
+.filters label {
+    font-size: 14px;
+    color: #5a5a5a;
+}
+
+/*  Room Cards */
 .room-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
+}
+
+.room-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    text-align: left;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.room-card:hover {
+    transform: scale(1.05);
+}
+
+.room-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.room-card-content {
+    padding: 15px;
+}
+
+.room-card h3 {
+    font-size: 18px;
+    color: #ff69b4;
+}
+
+.room-card p {
+    font-size: 14px;
+    color: #5a5a5a;
+}
+
+/*  Pagination */
+.pagination {
     margin-top: 20px;
 }
 
-/* Footer */
-.footer {
-    background-color: #000080;
+.pagination button {
+    background: #ff69b4;
     color: white;
-    text-align: center;
-    padding: 20px;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination button:hover {
+    background: #ff1493;
+}
+
+/*  Footer */
+.footer {
+    background-color: #ffccda;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+/*  Distance */
+.distance-checker {
+    margin-top: 10px;
+}
+
+.distance-checker input {
+    padding: 5px;
+    width: 80%;
+}
+
+.distance-checker button {
+    background: #007BFF;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
 }

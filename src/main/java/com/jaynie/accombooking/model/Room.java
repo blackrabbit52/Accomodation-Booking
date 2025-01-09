@@ -1,6 +1,7 @@
 package com.jaynie.accombooking.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
@@ -15,8 +16,10 @@ public class Room {
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
-    private double distance;
     private Weather weather;
+    @Transient
+    private double distance;
+
 
 
     public Room() {}

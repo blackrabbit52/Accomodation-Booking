@@ -10,12 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
+
+@CrossOrigin(origins = "http://localhost:63342")
 @RestController
 @RequestMapping("/api/room")
 
@@ -135,14 +133,14 @@ public class RoomController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Room>> findAllRooms() {
+    public ResponseEntity<Map<String, Object>> findAllRooms() {
         List<Room> rooms = service.findAllRooms();
 
         for (Room room : rooms) {
             String city = room.getLocation();
             Map<String, Object> weatherData = service.findWeatherByCity(city);
 
-            System.out.println("Weather data for room in " + city + ": " + weatherData); // Debugging
+            System.out.println("Weather data for room in " + city + ": " + weatherData);
 
             if (weatherData != null && !weatherData.isEmpty()) {
                 Room.Weather weather = new Room.Weather();
@@ -155,7 +153,11 @@ public class RoomController {
             }
         }
 
-        return new ResponseEntity<>(rooms, HttpStatus.OK);
+        // Wrap rooms in a response object
+        Map<String, Object> response = new HashMap<>();
+        response.put("rooms", rooms);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/near")
