@@ -1,10 +1,8 @@
 package com.jaynie.accombooking.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
-import java.util.Map;
 
 @Document(collection = "rooms")
 public class Room {
@@ -17,9 +15,7 @@ public class Room {
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
-    @Transient
-    private Map<String, Object> distance;
-    @Transient
+    private double distance;
     private Weather weather;
 
 
@@ -50,6 +46,9 @@ public class Room {
 
     public Weather getWeather() { return weather; }
     public void setWeather(Weather weather) { this.weather = weather; }
+
+    public double getDistance() { return distance; }
+    public void setDistance(double distance) { this.distance = distance; }
 
     public static class Location {
         private String city;

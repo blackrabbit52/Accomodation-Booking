@@ -66,18 +66,6 @@ public class RoomService {
 
 
 
-    // Update an existing room
-//    public Room updateRoom(String id, Room updatedRoom) {
-//        return roomRepository.findById(id).map(room -> {
-//            room.setCity(updatedRoom.getLocation());
-//            room.setPricePerMonth(updatedRoom.getPricePerMonth());
-//            room.setSpokenLanguages(updatedRoom.getSpokenLanguages());
-//            room.setDescription(updatedRoom.getDescription());
-//            room.setRoomType(updatedRoom.getRoomType());
-//            room.setAvailable(updatedRoom.isAvailable());
-//            return roomRepository.save(room);
-//        }).orElseThrow(() -> new RuntimeException("Room not found with id: " + id));
-//    }
 
 
 }

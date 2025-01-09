@@ -1,18 +1,20 @@
 package com.jaynie.accombooking.controller;
 
 import com.jaynie.accombooking.model.Room;
+import com.jaynie.accombooking.service.DistanceService;
+import com.jaynie.accombooking.service.GeocodeService;
 import com.jaynie.accombooking.service.RoomService;
-//import com.jaynie.accombooking.service.WeatherService;
 import com.jaynie.accombooking.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/room")
@@ -20,17 +22,19 @@ import java.util.Optional;
 public class RoomController {
     @Autowired
     private final RoomService service;
+    @Autowired
     private WeatherService weatherService;
+    @Autowired
+    private GeocodeService geocodeService;
+    @Autowired
+    private DistanceService distanceService;
 
     @Autowired
-    public RoomController(RoomService service) {
+    public RoomController(RoomService service, GeocodeService geocodeService, DistanceService distanceService) {
         this.service = service;
         this.weatherService = weatherService;
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Room>> getAllRooms() {
-        return new ResponseEntity<>(service.findAllRooms(), HttpStatus.OK);
+        this.geocodeService = geocodeService;
+        this.distanceService = distanceService;
     }
 
     @GetMapping("/city/{city}")
@@ -47,13 +51,13 @@ public class RoomController {
             Room room = byId.get();
             String city = room.getLocation();
 
-            // Fetch weather data from API
             Map<String, Object> weatherData = service.findWeatherByCity(city);
 
             System.out.println("Weather data in RoomController: " + weatherData); // Debugging
 
             if (weatherData != null && !weatherData.isEmpty()) {
-                // Convert map to Weather object
+
+                // Converted map to Weather object
                 Room.Weather weather = new Room.Weather();
                 weather.setTemperature((String) weatherData.get("temperature"));
                 weather.setHumidity((String) weatherData.get("humidity"));
@@ -61,6 +65,7 @@ public class RoomController {
                 weather.setMain((String) weatherData.get("main"));
 
                 // Set the converted Weather object into Room
+                // i used this to first test my weather data service
                 room.setWeather(weather);
             }
 
@@ -71,8 +76,8 @@ public class RoomController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<Room>> getAvailableRooms( ) {
-        List<Room> availableRooms = service.findAvailableRooms( );
+    public ResponseEntity<List<Room>> getAvailableRooms() {
+        List<Room> availableRooms = service.findAvailableRooms();
         return ResponseEntity.ok(availableRooms);
     }
 
@@ -90,15 +95,37 @@ public class RoomController {
     public List<Room> getRoomsByAmenity(@PathVariable String amenity) {
         return new ResponseEntity<>(service.getRoomsByAmenity(amenity), HttpStatus.OK).getBody();
     }
+
     @GetMapping("/postcode")
     public ResponseEntity<List<Room>> getRoomsByPostcode(@RequestParam("postcode") String postcode) {
-        return new ResponseEntity<>(service.findRoomsByPostcode(postcode),HttpStatus.OK);
+        return new ResponseEntity<>(service.findRoomsByPostcode(postcode), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Room> addRoom(@RequestBody Room room) {
-        Room savedRoom = service.saveRoom(room); // Save the room using the service
-        return ResponseEntity.ok(savedRoom); // Return the saved room with HTTP 200 (OK)
+        try {
+            // Save room to database
+            Room savedRoom = service.saveRoom(room);
+
+            // Fetch weather data based on room location
+            String city = savedRoom.getLocation();
+            Map<String, Object> weatherData = service.findWeatherByCity(city);
+
+            if (weatherData != null && !weatherData.isEmpty()) {
+                // Convert weather data to Room.Weather object
+                Room.Weather weather = new Room.Weather();
+                weather.setTemperature((String) weatherData.get("temperature"));
+                weather.setHumidity((String) weatherData.get("humidity"));
+                weather.setDescription((String) weatherData.get("description"));
+                weather.setMain((String) weatherData.get("main"));
+
+                // Attach weather data to room
+                savedRoom.setWeather(weather);
+            }
+            return new ResponseEntity<>(savedRoom, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -107,17 +134,65 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/weather/{city}")
-//    public ResponseEntity<List<Room>> getRoomsWithWeather(@PathVariable String city) {
-//        List<Room> rooms = service.findWeatherByCity(weather);
-//        return ResponseEntity.ok(rooms);
-//    }
+    @GetMapping("/all")
+    public ResponseEntity<List<Room>> findAllRooms() {
+        List<Room> rooms = service.findAllRooms();
 
+        for (Room room : rooms) {
+            String city = room.getLocation();
+            Map<String, Object> weatherData = service.findWeatherByCity(city);
 
+            System.out.println("Weather data for room in " + city + ": " + weatherData); // Debugging
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Room> updateRoom(@PathVariable String id, @RequestBody Room updatedRoom) {
-//        Room room = service.updateRoom(id, updatedRoom);
-//        return ResponseEntity.ok(room);
-//    }
+            if (weatherData != null && !weatherData.isEmpty()) {
+                Room.Weather weather = new Room.Weather();
+                weather.setTemperature((String) weatherData.get("temperature"));
+                weather.setHumidity((String) weatherData.get("humidity"));
+                weather.setDescription((String) weatherData.get("description"));
+                weather.setMain((String) weatherData.get("main"));
+
+                room.setWeather(weather);
+            }
+        }
+
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
+    @GetMapping("/near")
+    public ResponseEntity<List<Room>> getRoomsNearCity(@RequestParam String city, @RequestParam double maxDistance) {
+        double[] userCoords = geocodeService.getCoordinates(city);
+        if (userCoords == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        List<Room> allRooms = service.findAllRooms();
+        List<Room> nearbyRooms = allRooms.stream()
+                .map(room -> {
+                    double[] roomCoords = geocodeService.getCoordinates(room.getLocation());
+                    if (roomCoords != null) {
+                        double distance = distanceService.calculateDistance(userCoords[0], userCoords[1], roomCoords[0], roomCoords[1]);
+                        if (distance <= maxDistance) {
+                            // Fetch weather data
+                            Map<String, Object> weatherData = weatherService.getWeather(room.getLocation());
+
+                            // Convert Map to Weather object
+                            Room.Weather weather = new Room.Weather();
+                            weather.setTemperature((String) weatherData.get("temperature"));
+                            weather.setHumidity((String) weatherData.get("humidity"));
+                            weather.setDescription((String) weatherData.get("description"));
+                            weather.setMain((String) weatherData.get("main"));
+
+                            // Set weather and distance in Room
+                            room.setWeather(weather);
+                            room.setDistance(distance);
+                            return room;
+                        }
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok(nearbyRooms);
+    }
 }

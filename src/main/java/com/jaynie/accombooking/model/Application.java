@@ -1,5 +1,5 @@
 package com.jaynie.accombooking.model;
-
+import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,6 +9,7 @@ public class Application {
     private String id;
     private String userId;
     private String roomId;
+    private LocalDateTime appliedAt;
     private String status;
     private String name;
     private String email;
@@ -38,6 +39,9 @@ public class Application {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public LocalDateTime getAppliedAt() { return appliedAt; }
+    public void setAppliedAt(LocalDateTime appliedAt) {this.appliedAt = appliedAt;}
 
     public static class ApplicationRequest{
         private String roomId;

@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class WeatherService {
                         }
                     }
                 }
-                // ✅ Log Retrieved Weather Data
+                // Log Retrieved Weather Data
                 LOGGER.info("Weather data for {}: {}", city, weatherData);
             } else {
                LOGGER.warn("Failed to fetch weather data for {}: API returned {}", city, response.getStatusCode());
