@@ -16,6 +16,11 @@ public class Application {
     private String applicationId;
     private String applicationDate;
 
+    public Application() {
+        this.status = "Pending"; //  Default status when a new application is created
+        this.appliedAt = LocalDateTime.now(); //  Automatically set application date
+    }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -60,4 +65,3 @@ public class Application {
 
     }
 }
-

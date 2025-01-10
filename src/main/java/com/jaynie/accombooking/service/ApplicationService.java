@@ -26,7 +26,7 @@ public class ApplicationService {
     public List<Application> getApplicationsByUserId(String userId) {return applicationRepository.findByUserId(userId);}
     public List<Application> getApplicationsByRoomId(String roomId) {return applicationRepository.findByRoomId(roomId);}
     public List<Application> getApplicationStatus(String status) {return applicationRepository.findByStatus(status);}
-    public void deleteApplication(String id) {applicationRepository.deleteById(id);}
+    public List<Application> getApplicationsByName(String name) {return applicationRepository.findByName(name);}
 
     public Application createApplication(Application.ApplicationRequest applicationRequest) {
         Room room = roomRepository.findById(applicationRequest.getRoomId())
@@ -51,7 +51,11 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
-
-
-
+    public boolean deleteApplication(String id) {
+        if (applicationRepository.existsById(id)) {
+            applicationRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

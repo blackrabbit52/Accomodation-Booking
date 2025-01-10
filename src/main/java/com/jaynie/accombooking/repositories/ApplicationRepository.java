@@ -10,6 +10,7 @@ import java.util.List;
 public interface ApplicationRepository extends MongoRepository<Application, String> {
     List<Application> findAll();
     List<Application> findByUserId(String userId);
+    List<Application> findByName(String name);
     List<Application> findByRoomId(String roomId);
     List<Application> findByApplicationId(String applicationId);
     List<Application> findByStatus(String status);

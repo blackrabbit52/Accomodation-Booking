@@ -1,23 +1,25 @@
 const BASE_URL = "http://localhost:8080/api/room/all";
 
+//   object stores the filters that users select
 let currentFilters = {
-    search: "",
-    maxDistance: 100,
-    maxPrice: "",
-    furnished: false,
-    billsIncluded: false
+    search: "",          // User's search input
+    maxDistance: 100,    // Default max distance in km
+    maxPrice: "",        // Default max price
+    furnished: false,    // Whether the room is furnished
+    billsIncluded: false // Whether bills are included
 };
 
-// Fetch rooms from API with filters
+//  fetch rooms from API using the selected filters
 async function fetchRooms() {
     try {
         const queryParams = new URLSearchParams({
-            search: currentFilters.search || "",
-            maxDistance: currentFilters.maxDistance || 100,
-            maxPrice: currentFilters.maxPrice || "",
+            search: currentFilters.search || "",    //  Search filter
+            maxPrice: currentFilters.maxPrice || "", //  Price filter
             furnished: currentFilters.furnished ? "true" : "false",
             billsIncluded: currentFilters.billsIncluded ? "true" : "false"
         });
+
+        console.log("🔍 Fetching rooms with filters:", queryParams.toString());
 
         const response = await fetch(`${BASE_URL}?${queryParams}`);
         if (!response.ok) {
@@ -27,6 +29,7 @@ async function fetchRooms() {
         const data = await response.json();
         console.log("🔥 Rooms Data:", data);
 
+        // 🔄 Ensure the data format is correct
         if (Array.isArray(data)) {
             return { rooms: data };
         } else if (data.rooms) {
@@ -40,23 +43,27 @@ async function fetchRooms() {
     }
 }
 
-// Function to apply filters and fetch updated data
+//  apply search and filter settings, then refresh the displayed rooms
 async function applyFilters() {
+    console.log("🔄 Applying filters...");
+
+    // taking values from the input fields and checkboxes
     currentFilters.search = document.getElementById("search").value.trim().toLowerCase();
-    currentFilters.maxDistance = document.getElementById("distance-range").value || 100;
     currentFilters.maxPrice = document.getElementById("price-range").value || "";
     currentFilters.furnished = document.getElementById("furnished").checked;
     currentFilters.billsIncluded = document.getElementById("bills-included").checked;
 
-    console.log("🔍 Applying Filters:", currentFilters);
+    console.log("✅ Filters Updated:", currentFilters);
+
+    //  Fetch new room data with applied filters
     const data = await fetchRooms();
     renderRooms(data.rooms);
 }
 
-// Function to render rooms
+//  Render the list of rooms on the page
 function renderRooms(rooms) {
     const roomList = document.getElementById("room-list");
-    roomList.innerHTML = "";
+    roomList.innerHTML = ""; //  Clear existing rooms
 
     if (!rooms || rooms.length === 0) {
         roomList.innerHTML = "<p>No rooms found.</p>";
@@ -67,15 +74,15 @@ function renderRooms(rooms) {
         const roomCard = document.createElement("div");
         roomCard.className = "room-card";
 
-        // ✅ or ❌ for boolean values
+        //  Use icons to indicate true/false values
         const booleanIcons = (value) => (value ? "✅" : "❌");
 
-        // List of amenities
+        //  Generate list of amenities
         const amenitiesList = room.details.amenities
             .map((amenity) => `<li>⭐ ${amenity}</li>`)
             .join("");
 
-        // Distance checker input
+        //  Distance checker input
         const distanceCheck = `
             <div class="distance-checker">
                 <input type="text" id="uni-location-${room.id}" placeholder="Enter university name">
@@ -84,7 +91,7 @@ function renderRooms(rooms) {
             </div>
         `;
 
-        // Image selection logic
+        //  Select room image (default if not provided)
         const defaultImages = {
             "Nottingham": "/static/images/nottingham.jpg",
             "London": "/static/images/london.jpg",
@@ -97,11 +104,17 @@ function renderRooms(rooms) {
             ? `/static/images/${room.image}`
             : defaultImages[room.location] || "/static/images/default-room.jpg";
 
-        // Weather display
+        //  Weather information
         const weatherInfo = room.weather
             ? `<p>🌤️ <strong>Weather:</strong> ${room.weather.main} - ${room.weather.temperature}, ${room.weather.humidity} humidity</p>`
             : "<p>🌤️ Weather: No data</p>";
 
+        //  Spoken languages
+        const spokenLanguages = room.spoken_languages && room.spoken_languages.length > 0
+            ? room.spoken_languages.join(", ")
+            : "Not specified";
+
+        //  Create the room card HTML
         roomCard.innerHTML = `
             <img src="${roomImage}" alt="${room.name}" class="room-img">
             <div class="room-card-content">
@@ -116,72 +129,18 @@ function renderRooms(rooms) {
                 <p><strong>🏡 Live-in Landlord:</strong> ${booleanIcons(room.details.liveInLandlord)}</p>
                 <p><strong>🏠 Amenities:</strong></p>
                 <ul>${amenitiesList}</ul>
+                <p><strong>🗣️ Spoken Languages:</strong> ${spoken_languages}</p>
+
                 ${distanceCheck}
                 <button class="apply-button" onclick="applyForRoom('${room.id}', '${room.name}')">Apply Now</button>
             </div>
         `;
-        roomList.appendChild(roomCard);
+
+        roomList.appendChild(roomCard); // 📥 Add room to the list
     });
 }
 
-// Function to check distance from university
-async function checkDistance(roomId, roomLocation) {
-    const uniInput = document.getElementById(`uni-location-${roomId}`).value;
-
-    if (!uniInput) {
-        alert("❌ Please enter a university name!");
-        return;
-    }
-
-    try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${uniInput}`);
-        const uniData = await response.json();
-
-        if (uniData.length === 0) {
-            document.getElementById(`distance-result-${roomId}`).innerText = "❌ University not found!";
-            return;
-        }
-
-        const uniCoords = [parseFloat(uniData[0].lat), parseFloat(uniData[0].lon)];
-
-        const roomResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${roomLocation}`);
-        const roomData = await roomResponse.json();
-
-        if (roomData.length === 0) {
-            document.getElementById(`distance-result-${roomId}`).innerText = "❌ Room location not found!";
-            return;
-        }
-
-        const roomCoords = [parseFloat(roomData[0].lat), parseFloat(roomData[0].lon)];
-        const distance = calculateDistance(roomCoords[0], roomCoords[1], uniCoords[0], uniCoords[1]);
-
-        document.getElementById(`distance-result-${roomId}`).innerText = `📏 Distance to University: ${distance.toFixed(2)} km`;
-    } catch (error) {
-        console.error("❌ Error calculating distance:", error);
-        document.getElementById(`distance-result-${roomId}`).innerText = "❌ Error retrieving distance!";
-    }
-}
-
-// Haversine formula for distance calculation
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const EARTH_RADIUS = 6371; // Earth radius in km
-    const dLat = Math.toRadians(lat2 - lat1);
-    const dLon = Math.toRadians(lon2 - lon1);
-
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return EARTH_RADIUS * c;
-}
-
-// Convert degrees to radians
-Math.toRadians = function(degrees) {
-    return degrees * Math.PI / 180;
-};
-
-// Initialize room loading
+//  Fetch and display rooms on page load
 async function initialize() {
     console.log("⚡ Fetching rooms...");
     const data = await fetchRooms();
@@ -195,5 +154,10 @@ async function initialize() {
     }
 }
 
-// Run script after page loads
+//  Run the script after the page loads
 document.addEventListener("DOMContentLoaded", initialize);
+document.getElementById("search").addEventListener("input", applyFilters);
+document.getElementById("distance-range").addEventListener("change", applyFilters);
+document.getElementById("price-range").addEventListener("change", applyFilters);
+document.getElementById("furnished").addEventListener("change", applyFilters);
+document.getElementById("bills-included").addEventListener("change", applyFilters);

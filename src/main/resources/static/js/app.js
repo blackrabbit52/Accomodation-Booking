@@ -1,5 +1,5 @@
 const BASE_URL = "http://localhost:8080/api/room/all";
-let currentPage = 1;
+let currentPage = 1; // Stores the current page for pagination
 let searchQuery = ""; // Stores search input
 let filters = {
     minPrice: 0,
@@ -12,7 +12,8 @@ let filters = {
  * Fetches rooms from the API with pagination and search filters.
  */
 async function fetchRooms() {
-    try {
+    try { // Construct query parameters with the current search and filter values
+
         const queryParams = new URLSearchParams({
             page: currentPage,
             search: searchQuery,
@@ -45,21 +46,24 @@ async function fetchRooms() {
 }
 
 /**
- * Renders the fetched rooms on the webpage.
+ * Updates the room list on the webpage with the latest fetched data.
  */
+
 function renderRooms(rooms) {
     const roomList = document.getElementById("room-list");
-    roomList.innerHTML = "";
+    roomList.innerHTML = ""; // Clear existing room cards
 
+    // Show a message if no rooms are found
     if (!rooms || rooms.length === 0) {
         roomList.innerHTML = "<p>No rooms found.</p>";
         return;
     }
-
+    // Loop through the list of rooms and create a card for each one
     rooms.forEach((room) => {
         const roomCard = document.createElement("div");
         roomCard.className = "room-card";
 
+        // Define default images for locations if a room image is not provided
         const defaultImages = {
             "Nottingham": "/static/images/nottingham.jpg",
             "London": "/static/images/london.jpg",
@@ -68,7 +72,7 @@ function renderRooms(rooms) {
             "Bristol": "/static/images/bristol.jpg"
         };
 
-        // Fixing image loading
+        //  image loading
         const roomImage = room.image && room.image !== ""
             ? `/static/images/${room.image}`
             : defaultImages[room.location] || "/static/images/default-room.jpg";
@@ -78,7 +82,7 @@ function renderRooms(rooms) {
             ? `£${room.price_per_month_gbp}/month`
             : "Contact for Price";
 
-        // **Weather Data Handling**
+        // Weather Data Handling
         const weather = room.weather;
         let weatherHTML = "";
         if (weather) {
@@ -100,16 +104,16 @@ function renderRooms(rooms) {
                 ${weatherHTML}
 
                 <p><strong>${price}</strong></p>
-                <button class="apply-button" onclick="applyForRoom('${room.id}', '${room.name}')">Apply Now</button>
+                    <button class="apply-button" onclick="applyForRoom('${room.id}', '${room.name}', '${room.location}', '${room.price_per_month_gbp}')"> Apply Now</button>  
             </div>
         `;
         roomList.appendChild(roomCard);
     });
 }
-
 /**
- * Applies search and filters.
+ * Applies search and filters, then refreshes the displayed rooms.
  */
+
 async function applyFilters() {
     searchQuery = document.getElementById("search").value.trim();
     filters.maxPrice = document.getElementById("price-range").value || 2000;
@@ -157,7 +161,9 @@ async function applyForRoom(roomId, roomName) {
         roomId: roomId,
         userId: "user-123",
         name: userName,
-        email: userEmail
+        email: userEmail,
+        roomName: roomName,
+        status: "Pending"
     };
 
     try {
@@ -172,6 +178,8 @@ async function applyForRoom(roomId, roomName) {
         }
 
         alert("🎉 Application submitted successfully!");
+        localStorage.setItem("appliedRoom", JSON.stringify(savedApplication));
+        window.location.href = "apply.html";
     } catch (error) {
         console.error("❌ Error submitting application:", error);
         alert("❌ Failed to apply for the room. Please try again.");

@@ -17,11 +17,15 @@ public class Room {
     private int price_per_month_gbp;
     private List<String> spoken_languages;
     private Weather weather;
+    /* @Transient is being used to prevent the distance field from being stored in the database,
+    because it is a calculated value */
     @Transient
     private double distance;
 
 
 
+    /* Getters and setters are used to encapsulate data,
+       control access to fields, and allow validation before updating values. */
     public Room() {}
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -114,4 +118,5 @@ public class Room {
         public List<String> getAmenities() { return amenities; }
         public void setAmenities(List<String> amenities) { this.amenities = amenities; }
     }
+
 }

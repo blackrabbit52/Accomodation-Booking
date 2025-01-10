@@ -228,20 +228,84 @@ body {
     margin-top: 20px;
     font-weight: bold;
 }
-/*  Distance */
+/*  Distance Checker */
 .distance-checker {
+    margin-top: 10px;
+    background-color: #fff5e1; /* Soft Cream Background */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Input Field */
+.distance-checker input {
+    padding: 8px;
+    width: 80%;
+    border: 2px solid #ff69b4; /* Soft Pink Border */
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #fffaf0; /* Light Cream */
+    color: #5a5a5a;
+    text-align: center;
+}
+
+/* "Check Distance" Button */
+.distance-checker button {
+    background: #ff69b4; /* Pastel Pink */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: 0.3s;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.distance-checker button:hover {
+    background: #ff85a2; /* Slightly darker pink for hover effect */
+    color: white;
+}
+
+/*Apply */
+.apply-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #ff69b4; /* Pink Theme */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.apply-button:hover {
+    background-color: #ff1493; /* Darker Pink */
+}
+
+/* Clear Receipt Button */
+.clear-button {
+    padding: 10px;
+    background-color: #ffb6c1; /* Light pink */
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
     margin-top: 10px;
 }
 
-.distance-checker input {
-    padding: 5px;
-    width: 80%;
-}
-
-.distance-checker button {
-    background: #007BFF;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
+.clear-button:hover {
+    background-color: #ff85a2; /* Darker pink */
 }

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find the perfect student housing for your needs.">
+    <title>Luxury Housing Finder</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Receipt Card */
+        .receipt-card {
+            background: #ffe6f0; /* Light pastel pink */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            margin: 20px auto;
+            border: 2px solid #ffb6c1; /* Soft pink border */
+        }
+
+        /* Status Colors (Soft Pastel Theme) */
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status.pending {
+            background-color: #ffccda; /* Soft pastel orange-pink */
+            color: #5a5a5a;
+        }
+
+        .status.accepted {
+            background-color: #c5e1a5; /* Soft pastel green */
+            color: #2e7d32;
+        }
+
+        .status.rejected {
+            background-color: #ffcccb; /* Soft pastel red */
+            color: #d32f2f;
+        }
+
+    </style>
+</head>
+
+<body>
+<!--Header  -->
+<header class="header">
+    <div class="container">
+        <div class="logo">
+            <h1> 📋 My Room Applications</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">🏠 Home</a></li>
+                <li><a href="room.html">🛏️ Rooms</a></li>
+                <li><a href="apply.html">✅  Apply</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="applications">
+    <h2>Enter Your Name to View Applications</h2>
+
+    <!-- Search form -->
+    <div class="search-box">
+        <input type="text" id="applicantName" placeholder="Enter your name">
+        <button id="searchApplication">🔍 Search</button>
+    </div>
+
+    <div id="application-list" class="application-list">
+        <p>Search to see your applications.</p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>© 2025 Luxury Housing Finder | Designed by Jaynie Akogwu</p>
+</footer>
+
+<script src="../js/apply.js"></script>
+</body>
+</html>

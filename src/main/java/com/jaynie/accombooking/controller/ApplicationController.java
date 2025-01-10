@@ -8,13 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/application")
+@CrossOrigin(origins = "http://localhost:63342") // allowing frontend access
+
 public class ApplicationController {
     @Autowired
     private final ApplicationService service;
+
     @Autowired
     public ApplicationController(ApplicationService service) {
         this.service = service;
@@ -23,6 +27,26 @@ public class ApplicationController {
     @GetMapping("/all")
     public ResponseEntity<List<Application>> getAllApplications() {
         return new ResponseEntity<>(service.getAllApplications(), HttpStatus.OK);
+    }
+
+    // view application by searching the name
+    @GetMapping("/search")
+    public ResponseEntity<List<Application>> getApplicationsByName(@RequestParam String name) {
+        List<Application> applications = service.getApplicationsByName(name);
+        if (applications.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+        }
+        return ResponseEntity.ok(applications);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteApplication(@PathVariable String id) {
+        boolean deleted = service.deleteApplication(id);
+        if (deleted) {
+            return ResponseEntity.ok("Application cancelled successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Application not found.");
+        }
     }
 
     @GetMapping("/roomId/{roomId}")
@@ -55,4 +79,6 @@ public class ApplicationController {
     public HttpEntity<List<Application>> getApplicationStatus(@PathVariable String status) {
         return new ResponseEntity<>(service.getApplicationStatus(status),HttpStatus.OK);
     }
+
+
 }
