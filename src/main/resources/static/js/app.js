@@ -11,7 +11,7 @@ let filters = {
 /**
  * Fetches rooms from the API with pagination and search filters.
  */
-async function fetchRooms() {
+async function fetchRooms(searchQuery = "") {
     try { // Construct query parameters with the current search and filter values
 
         const queryParams = new URLSearchParams({
@@ -102,8 +102,8 @@ function renderRooms(rooms) {
                 <h3>${room.name}</h3>
                 <h4>${room.location ? room.location : "Unknown Location"}</h4>
                 ${weatherHTML}
-
                 <p><strong>${price}</strong></p>
+               
                     <button class="apply-button" onclick="applyForRoom('${room.id}', '${room.name}', '${room.location}', '${room.price_per_month_gbp}')"> Apply Now</button>  
             </div>
         `;
@@ -182,34 +182,9 @@ async function applyForRoom(roomId, roomName) {
         window.location.href = "apply.html";
     } catch (error) {
         console.error("❌ Error submitting application:", error);
-        alert("❌ Failed to apply for the room. Please try again.");
     }
 }
 
-/**
- * Handles pagination and updates page content.
- */
-function handlePagination(totalPages) {
-    const prevButton = document.getElementById("prev-page");
-    const nextButton = document.getElementById("next-page");
-
-    prevButton.disabled = currentPage <= 1;
-    nextButton.disabled = currentPage >= totalPages;
-
-    prevButton.onclick = async () => {
-        if (currentPage > 1) {
-            currentPage--;
-            await loadPageData();
-        }
-    };
-
-    nextButton.onclick = async () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            await loadPageData();
-        }
-    };
-}
 
 /**
  * Fetches and displays data for the current page.
@@ -224,6 +199,28 @@ async function loadPageData() {
 /**
  * Attach event listeners for search and filter inputs.
  */
+document.addEventListener("DOMContentLoaded", function () {
+    const searchForm = document.querySelector(".search-form"); // Select the form
+    const searchInput = document.getElementById("search");
+
+    if (searchForm) {
+        searchForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            const searchQuery = searchInput.value.trim();
+            if (searchQuery === "") {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            console.log("Searching for:", searchQuery);
+            fetchRooms(searchQuery); // Call function to fetch data
+        });
+    } else {
+        console.error("❌ Search form not found.");
+    }
+});
+
 document.getElementById("search").addEventListener("input", applyFilters);
 document.getElementById("price-range").addEventListener("change", applyFilters);
 document.getElementById("furnished").addEventListener("change", applyFilters);

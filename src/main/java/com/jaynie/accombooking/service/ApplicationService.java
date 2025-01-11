@@ -23,7 +23,6 @@ public class ApplicationService {
 
     public List<Application> getAllApplications() { return applicationRepository.findAll();}
     public List<Application> getApplicationById(String id){ return applicationRepository.findByApplicationId(id);}
-    public List<Application> getApplicationsByUserId(String userId) {return applicationRepository.findByUserId(userId);}
     public List<Application> getApplicationsByRoomId(String roomId) {return applicationRepository.findByRoomId(roomId);}
     public List<Application> getApplicationStatus(String status) {return applicationRepository.findByStatus(status);}
     public List<Application> getApplicationsByName(String name) {return applicationRepository.findByName(name);}
@@ -57,5 +56,23 @@ public class ApplicationService {
             return true;
         }
         return false;
+        
+    }
+
+    public List<Application> getApplicationsByUserId(String userId) {
+        List<Application> applications = applicationRepository.findByUserId(userId);
+
+        for (Application application : applications) {
+            // Fetch Room details
+            Room room = roomRepository.findById(application.getRoomId()).orElse(null);
+
+            if (room != null) {
+                application.setRoomName(room.getName());
+                application.setLocation(room.getLocation());
+                application.setPrice_per_month_gbp(room.getPrice_per_month_gbp());
+            }
+        }
+
+        return applications;
     }
 }

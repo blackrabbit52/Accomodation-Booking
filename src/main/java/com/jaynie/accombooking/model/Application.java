@@ -1,6 +1,7 @@
 package com.jaynie.accombooking.model;
 import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "applications")
@@ -15,6 +16,28 @@ public class Application {
     private String email;
     private String applicationId;
     private String applicationDate;
+
+    @Transient // Prevents this field from being stored in MongoDB
+    private String roomName;
+
+    @Transient
+    private String location;
+
+    @Transient
+    private int Price_per_month_gbp;
+
+    // Getters and Setters
+    public String getRoomName() { return roomName; }
+    public void setRoomName(String roomName) { this.roomName = roomName; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public int getPrice_per_month_gbp() { return Price_per_month_gbp; }
+    public void setPrice_per_month_gbp(int pricePerMonth) { this.Price_per_month_gbp = pricePerMonth; }
+
+
+
 
     public Application() {
         this.status = "Pending"; //  Default status when a new application is created

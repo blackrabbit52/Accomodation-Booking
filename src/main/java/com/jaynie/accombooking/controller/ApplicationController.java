@@ -56,7 +56,11 @@ public class ApplicationController {
 
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<Application>> getApplicationsByUserId(@PathVariable String userId) {
-        return new ResponseEntity<>(service.getApplicationsByUserId(userId), HttpStatus.OK);
+        List<Application> applications = service.getApplicationsByUserId(userId);
+        if (applications.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+        }
+        return ResponseEntity.ok(applications);
     }
 
     @GetMapping("/applicationId/{applicationId}")

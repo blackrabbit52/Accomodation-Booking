@@ -16,11 +16,13 @@ public class Room {
     private String availability_date;
     private int price_per_month_gbp;
     private List<String> spoken_languages;
-    private Weather weather;
+
     /* @Transient is being used to prevent the distance field from being stored in the database,
     because it is a calculated value */
     @Transient
     private double distance;
+    @Transient
+    private Weather weather;
 
 
 

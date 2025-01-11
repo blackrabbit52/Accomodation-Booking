@@ -1,77 +1,92 @@
-// page to fully load before running the script
+const API_APPLICATION_URL = "http://localhost:8080/api/application/user";
+const API_ROOM_URL = "http://localhost:8080/api/room";
+
+// Wait for the page to fully load
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ JavaScript Loaded");
+
     const searchButton = document.getElementById("searchApplication");
     if (searchButton) {
-        // 🎯 Add event listener to the search button so it fetches applications when clicked
-        searchButton.addEventListener("click", fetchApplicationsByName);
+        searchButton.addEventListener("click", fetchApplicationsByUserId);
+    } else {
+        console.error("❌ Search button not found in DOM.");
     }
 });
 
-//  Fetch applications by name when the user searches
-async function fetchApplicationsByName() {
-    const applicantName = document.getElementById("applicantName").value.trim();
+// Fetch applications by userId
+async function fetchApplicationsByUserId() {
+    const userId = document.getElementById("userId");
 
-    if (applicantName === "") {
-        alert("Please enter your name to view applications."); // ⚠️ Prevent empty searches
+    if (!userId) {
+        console.error("❌ User ID input field not found!");
+        return;
+    }
+
+    if (!userId) {
+        alert("❌ Please enter a valid User ID.");
         return;
     }
 
     try {
-        //  Send request to the backend API with the entered name
-        const response = await fetch(`http://localhost:8080/api/application/search?name=${encodeURIComponent(applicantName)}`);
-
+        const response = await fetch(`${API_BASE_URL}/${userId}`); // Fetch data from API
         if (!response.ok) {
-            throw new Error("Failed to fetch applications."); // Handle errors
+            throw new Error("❌ No applications found for this user.");
         }
 
-        const data = await response.json(); // Convert response to JSON
-        displayUserApplications(data); //  Display the fetched applications
+        const applications = await response.json(); // Convert response to JSON
+        displayUserApplications(applications, userId); // Call function to display results
+
     } catch (error) {
         console.error("❌ Error fetching applications:", error);
+        document.getElementById("application-list").innerHTML = "<p>No applications found.</p>";
     }
 }
 
-//  Display applications in the frontend
-function displayUserApplications(applications) {
-    const applicationList = document.getElementById("application-list");
-    applicationList.innerHTML = ""; //  Clear previous results
 
-    if (applications.length === 0) {
-        applicationList.innerHTML = "<p>No applications found under this name.</p>"; // 🚨 Show message if no results
+// Display user applications with room details
+function displayUserApplications(applications, userId) {
+    const applicationList = document.getElementById("application-list");
+    applicationList.innerHTML = ""; // Clear previous results
+
+    if (!applications || applications.length === 0) {
+        applicationList.innerHTML = "<p>No applications found.</p>";
         return;
     }
 
-    //  Loop through each application and create a card for it
-    applications.forEach(app => {
+    applications.forEach((app) => {
         const appCard = document.createElement("div");
         appCard.classList.add("application-card");
-
-        //  Fill the application card with details
         appCard.innerHTML = `
-            <h3>🏠 Room: ${app.roomName}</h3>
+            <h3>🏠 Room: ${room.name}</h3>
             <p><strong>📍 Location:</strong> ${app.location}</p>
-            <p><strong>💰 Price:</strong> £${app.pricePerMonth}/month</p>
+            <p><strong>💰 Price:</strong> £${app.price_per_month_gbp}/month</p>
+            <p><strong>📅 Applied On:</strong> ${new Date(app.applicationDate).toLocaleDateString()}</p>
             <p><strong>📌 Status:</strong> <span class="status ${app.status.toLowerCase()}">${app.status}</span></p>
-            ${app.status === "PENDING" ? `<button class="cancel-button" onclick="cancelApplication(${app.id})">❌ Cancel</button>` : ""}
+            <button class="cancel-button" onclick="cancelApplication('${app.id}', '${userId}')">❌ Cancel Application</button>
+     
         `;
 
-        applicationList.appendChild(appCard); // 📥 Add the application card to the list
+        applicationList.appendChild(appCard);
     });
 }
 
-//  Cancel an application
-async function cancelApplication(applicationId) {
+// Cancel an application
+async function cancelApplication(applicationId, userId) {
+    if (!confirm("Are you sure you want to cancel this application?")) {
+        return;
+    }
+
     try {
-        //  Send a request to the backend to cancel the application
-        const response = await fetch(`http://localhost:8080/api/application/delete/${applicationId}`, { method: "PUT" });
+        console.log(`🗑️ Deleting application with ID: ${applicationId}`);
+        const response = await fetch(`${API_APPLICATION_URL}/delete/${id}`, { method: "DELETE" });
 
         if (!response.ok) {
-            throw new Error("Failed to cancel application."); //  Handle cancellation failure
+            throw new Error("Failed to cancel application.");
         }
 
-        alert("✅ Application cancelled successfully."); //  Show success message
-        await fetchApplicationsByName(); //  Refresh the list after cancellation
+        alert("✅ Application cancelled successfully.");
+        fetchApplicationsByUserId(userId); // Refresh applications after deletion
     } catch (error) {
-        console.error(" Error cancelling application:", error);
+        console.error("❌ Error cancelling application:", error);
     }
 }
