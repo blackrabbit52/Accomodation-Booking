@@ -1,4 +1,4 @@
-This is a global dorm accomodation booking API
+This is a global dorm accomodation booking 
 
 To launch this project with docker 
 
