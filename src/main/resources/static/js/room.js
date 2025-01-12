@@ -5,18 +5,18 @@ document.addEventListener("DOMContentLoaded", initialize);
 
 let currentFilters = {
     search: "",
-    maxDistance: 100,
     maxPrice: "",
     furnished: false,
     billsIncluded: false
 };
 
-// Fetch rooms from API with filters
+/**
+ * Fetch rooms from API with filters.
+ */
 async function fetchRooms() {
     try {
         const queryParams = new URLSearchParams({
             search: currentFilters.search || "",
-            maxDistance: currentFilters.maxDistance || 100,
             maxPrice: currentFilters.maxPrice || "",
             furnished: currentFilters.furnished ? "true" : "false",
             billsIncluded: currentFilters.billsIncluded ? "true" : "false"
@@ -24,42 +24,44 @@ async function fetchRooms() {
 
         const response = await fetch(`${BASE_URL}?${queryParams}`);
         if (!response.ok) {
-            throw new Error("Failed to fetch rooms");
+            throw new Error(`HTTP Error: ${response.status}`);
         }
 
         const data = await response.json();
         console.log("🔥 Rooms Data:", data);
 
-        if (Array.isArray(data)) {
-            return { rooms: data };
-        } else if (data.rooms) {
-            return data;
-        } else {
-            throw new Error("Invalid API response format.");
-        }
+        return Array.isArray(data) ? { rooms: data, totalPages: data.length } : data.rooms ? data : { rooms: [] };
     } catch (error) {
         console.error("❌ Error fetching rooms:", error);
         return { rooms: [] };
     }
 }
 
-// Function to apply filters and fetch updated data
+/**
+ * Applies search filters and fetches updated data.
+ */
 async function applyFilters() {
-    currentFilters.search = document.getElementById("search").value.trim().toLowerCase();
-    currentFilters.maxDistance = document.getElementById("distance-range").value || 100;
+    const searchInput = document.getElementById("search").value.trim().toLowerCase();
     currentFilters.maxPrice = document.getElementById("price-range").value || "";
     currentFilters.furnished = document.getElementById("furnished").checked;
     currentFilters.billsIncluded = document.getElementById("bills-included").checked;
 
     console.log("🔍 Applying Filters:", currentFilters);
     const data = await fetchRooms();
-    renderRooms(data.rooms);
+
+    let filteredRooms = data.rooms.filter(room =>
+        room.location.toLowerCase().startsWith(searchInput)
+    );
+
+    renderRooms(filteredRooms);
 }
 
-// Function to render rooms
+/**
+ * Renders rooms on the webpage.
+ */
 function renderRooms(rooms) {
     const roomList = document.getElementById("room-list");
-    roomList.innerHTML = "";
+    roomList.innerHTML = ""; // Clear existing room cards
 
     if (!rooms || rooms.length === 0) {
         roomList.innerHTML = "<p>No rooms found.</p>";
@@ -70,24 +72,12 @@ function renderRooms(rooms) {
         const roomCard = document.createElement("div");
         roomCard.className = "room-card";
 
-        // ✅ or ❌ for boolean values
         const booleanIcons = (value) => (value ? "✅" : "❌");
 
-        // List of amenities
         const amenitiesList = room.details.amenities
             .map((amenity) => `<li>⭐ ${amenity}</li>`)
             .join("");
 
-        // Distance checker input
-        const distanceCheck = `
-            <div class="distance-checker">
-                <input type="text" id="uni-location-${room.id}" placeholder="Enter university name">
-                <button onclick="checkDistance('${room.id}', '${room.location}')">📍 Check Distance</button>
-                <p id="distance-result-${room.id}"></p>
-            </div>
-        `;
-
-        // Image selection logic
         const defaultImages = {
             "Nottingham": "/static/images/nottingham.jpg",
             "London": "/static/images/london.jpg",
@@ -100,14 +90,22 @@ function renderRooms(rooms) {
             ? `/static/images/${room.image}`
             : defaultImages[room.location] || "/static/images/default-room.jpg";
 
-        // Weather display
         const weatherInfo = room.weather
             ? `<p>🌤️ <strong>Weather:</strong> ${room.weather.main} - ${room.weather.temperature}, ${room.weather.humidity} humidity</p>`
             : "<p>🌤️ Weather: No data</p>";
 
         const spokenLanguages = room.spokenLanguages && room.spokenLanguages.length > 0
-            ? room.spokenLanguages.join(", ") // Join array into a string
-            : "Not specified"; // Default if no languages provided
+            ? room.spokenLanguages.join(", ")
+            : "Not specified";
+
+        // ✅ Check Distance Feature
+        const distanceCheck = `
+            <div class="distance-checker">
+                <input type="text" id="uni-location-${room.id}" placeholder="Enter university name">
+                <button onclick="checkDistance('${room.id}', '${room.location}')">📍 Check Distance</button>
+                <p id="distance-result-${room.id}"></p>
+            </div>
+        `;
 
         roomCard.innerHTML = `
             <img src="${roomImage}" alt="${room.name}" class="room-img">
@@ -122,18 +120,20 @@ function renderRooms(rooms) {
                 <p><strong>👥 Shared With:</strong> ${room.details.shared_with} people</p>
                 <p><strong>🏡 Live-in Landlord:</strong> ${booleanIcons(room.details.liveInLandlord)}</p>
                 <p><strong>🏠 Amenities:</strong></p>
-                <ul>${amenitiesList}</ul>
+                 <ul>${amenitiesList}</ul>
                 <p><strong>🗣️ Spoken Languages:</strong> ${spokenLanguages}</p>
-
                 ${distanceCheck}
                 <button class="apply-button" onclick="applyForRoom('${room.id}', '${room.name}')">Apply Now</button>
             </div>
         `;
+
         roomList.appendChild(roomCard);
     });
 }
 
-// Function to check distance from university
+/**
+ * Checks the distance between a university and a room.
+ */
 async function checkDistance(roomId, roomLocation) {
     const uniInput = document.getElementById(`uni-location-${roomId}`).value;
 
@@ -171,9 +171,11 @@ async function checkDistance(roomId, roomLocation) {
     }
 }
 
-// Haversine formula for distance calculation
+/**
+ * Haversine formula for distance calculation.
+ */
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const EARTH_RADIUS = 6371; // Earth radius in km
+    const EARTH_RADIUS = 6371;
     const dLat = Math.toRadians(lat2 - lat1);
     const dLon = Math.toRadians(lon2 - lon1);
 
@@ -190,21 +192,6 @@ Math.toRadians = function(degrees) {
     return degrees * Math.PI / 180;
 };
 
-// Initialize room loading
-async function initialize() {
-    console.log("⚡ Fetching rooms...");
-    const data = await fetchRooms();
-    console.log("✅ Rooms Loaded:", data);
-
-    if (data.rooms && data.rooms.length > 0) {
-        renderRooms(data.rooms);
-    } else {
-        console.error("❌ No valid data received from API.");
-        document.getElementById("room-list").innerHTML = "<p>No rooms available.</p>";
-    }
-}
-
-//Room Application
 async function applyForRoom(roomId, roomName) {
     const userName = prompt(`Apply for: ${roomName}\n\nEnter your full name:`);
     const userEmail = prompt("Enter your email:");
@@ -235,10 +222,25 @@ async function applyForRoom(roomId, roomName) {
         }
 
         alert("🎉 Application submitted successfully!");
-        localStorage.setItem("appliedRoom", JSON.stringify(savedApplication));
+        localStorage.setItem("appliedRoom", JSON.stringify(applicationData));
         window.location.href = "apply.html";
     } catch (error) {
         console.error("❌ Error submitting application:", error);
     }
 }
 
+/**
+ * Initializes the room loading process.
+ */
+async function initialize() {
+    console.log("⚡ Fetching rooms...");
+    const data = await fetchRooms();
+    console.log("✅ Rooms Loaded:", data);
+
+    if (data.rooms && data.rooms.length > 0) {
+        renderRooms(data.rooms);
+    } else {
+        console.error("❌ No valid data received from API.");
+        document.getElementById("room-list").innerHTML = "<p>No rooms available.</p>";
+    }
+}

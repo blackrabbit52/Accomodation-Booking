@@ -21,7 +21,7 @@ public class ApplicationService {
         this.roomRepository = roomRepository;
     }
 
-    public List<Application> getAllApplications() { return applicationRepository.findAll();}
+    public List<Application> getAllApplications() {return applicationRepository.findAll();}
     public List<Application> getApplicationById(String id){ return applicationRepository.findByApplicationId(id);}
     public List<Application> getApplicationsByRoomId(String roomId) {return applicationRepository.findByRoomId(roomId);}
     public List<Application> getApplicationStatus(String status) {return applicationRepository.findByStatus(status);}

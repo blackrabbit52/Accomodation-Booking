@@ -1,0 +1,178 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2C2C2C; /* Dark Grey */
+    text-align: center;
+    color: #E0E0E0; /* Light Grey for readability */
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* Header */
+.header {
+    background: #3A3A3A; /* Darker Grey */
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    margin-bottom: 50px; /* Adds spacing below header */
+}
+
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px; /* Moves links lower */
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.navbar ul li a {
+    color: #FFB6C1; /* Soft pink for contrast */
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar ul li a:hover {
+    background: #FFB6C1; /* Subtle muted pink hover */
+    color: black;
+}
+
+
+/* Applications Section */
+.applications {
+    margin-top: 140px; /* Adjusted to avoid header overlap */
+    padding: 40px 20px;
+    background: floralwhite;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #3A3A3A;;
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background: #2C2C2C;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Input Field */
+.search-box input {
+    padding: 12px;
+    width: 300px;
+    border: 2px solid #FF69B4;
+    border-radius: 20px;
+    font-size: 16px;
+    text-align: center;
+    background-color: #3A3A3A;
+    color: #E0E0E0;
+}
+
+/* Search Button */
+.search-box button {
+    padding: 12px 20px;
+    border: none;
+    background: #FF69B4;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.search-box button:hover {
+    background: #FF1493;
+}
+
+/* Application List */
+.application-list {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Application Card */
+.application-card {
+    background: #3A3A3A; /* Dark Grey */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    border: 2px solid #FF69B4;
+    text-align: left;
+    width: 80%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform 0.2s ease-in-out;
+    color: #E0E0E0;
+}
+
+.application-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 6px 14px rgba(255, 105, 180, 0.3); /* Pink glow */
+}
+
+/* Status Colors */
+.status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.status.pending {
+    background-color: #FFC0CB;
+    color: #5A5A5A;
+}
+
+
+/* Cancel Button */
+.cancel-button {
+    background: #FF4D4D;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+    width: 100%;
+}
+
+.cancel-button:hover {
+    background: #CC0000;
+}
+
+/* Footer */
+.footer {
+    background-color: #3A3A3A;
+    color: #E0E0E0;
+    padding: 15px;
+    font-weight: bold;
+    margin-top: 40px;
+    text-align: center;
+}

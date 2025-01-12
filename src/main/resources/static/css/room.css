@@ -1,0 +1,290 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #EDEAE0; /* Dark Grey */
+    text-align: center;
+    color: #E0E0E0; /* Light Grey for readability */
+}
+
+/* Header */
+.header {
+    background: #3A3A3A; /* Darker Grey */
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    margin-bottom: 50px; /* Adds spacing below header */
+}
+
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px; /* Moves links lower */
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.navbar ul li a {
+    color: #FFB6C1; /* Soft pink for contrast */
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar ul li a:hover {
+    background: #FFB6C1; /* Subtle muted pink hover */
+    color: black;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    text-align: center;
+    background: floralwhite;
+    padding: 50px 20px 60px; /* Reduced padding */
+    color: #333; /* Dark grey text for readability */
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px; /* Reduced margin to decrease space between sections */
+}
+
+.hero-banner {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    display: inline-block;
+    max-width: 80%;
+    color: #333;
+}
+
+/* FILTER SECTION */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #F5F5F5; /* Light grey background */
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+/* FILTER ITEMS  */
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* LABEL STYLING */
+.filter-section label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2C2C2C; /* Dark grey */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* INPUT FIELDS */
+.filter-section input[type="text"],
+.filter-section input[type="number"] {
+    padding: 6px;
+    font-size: 14px;
+    border: 2px solid #3A3A3A;
+    border-radius: 8px;
+    width: 140px;
+    text-align: center;
+    color: black;
+    background: white;
+}
+
+/* CHECKBOXES */
+.filter-section input[type="checkbox"] {
+    width: 14px;
+    color: #2C2C2C; /* Keep text dark */
+    height: 20px;
+}
+
+/* APPLY FILTERS BUTTON */
+.filter-section button {
+    padding: 8px 14px;
+    background: #FF69B4;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.filter-section button:hover {
+    background: #FF1493;
+}
+
+/* Room Listing Section */
+.room-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two rooms per row */
+    gap: 40px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .room-list {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+    }
+    .filter-section {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Room Cards */
+.room-card {
+    background: #3A3A3A; /* Dark Grey */
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    width: 100%;
+    max-width: 500px; /* Make the cards wider */
+    text-align: left;
+    margin: auto;
+}
+
+.room-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(255, 105, 180, 0.3); /* Pink glow */
+}
+
+.room-card img {
+    width: 100%;
+    height: 250px; /* Taller images */
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+.room-card-content {
+    padding: 20px;
+}
+
+.room-card h3 {
+    font-size: 22px;
+    color: #FF69B4; /* Soft Pink */
+    margin-bottom: 10px;
+}
+
+.room-card p {
+    font-size: 16px;
+    color: #E0E0E0;
+    margin-bottom: 8px;
+}
+
+.room-card .amenities {
+    color: white !important; /* Ensure white text */
+    font-weight: bold;
+    list-style: none; /* Removes default list styles */
+    padding: 0;
+}
+
+/* Remove `<` from amenities */
+.room-card .amenities li::before {
+    content: "⭐"; /* Add star emoji without < */
+    margin-right: 5px;
+}
+
+/* Distance Checker */
+.distance-checker {
+    margin-top: 15px;
+    background: #3A3A3A;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 80%;
+    margin: auto;
+}
+
+.distance-checker input {
+    padding: 8px;
+    width: 80%;
+    border: 1px solid #FF69B4;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #2C2C2C;
+    color: #E0E0E0;
+    margin-bottom: 10px;
+}
+
+.distance-checker button {
+    background: #FF69B4;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.distance-checker button:hover {
+    background: #FF1493;
+}
+
+.distance-checker p {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #E0E0E0;
+}
+
+/* Apply Button */
+.apply-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #FF69B4; /* Pink Theme */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.apply-button:hover {
+    background-color: #FF1493; /* Darker Pink */
+}
+
+
+/* Footer styling */
+.footer {
+    background-color: #3A3A3A;
+    color: #E0E0E0;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+}

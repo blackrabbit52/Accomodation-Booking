@@ -10,7 +10,7 @@ public class Application {
     private String id;
     private String userId;
     private String roomId;
-    private LocalDateTime appliedAt;
+    //private LocalDateTime appliedAt;
     private String status;
     private String name;
     private String email;
@@ -39,10 +39,10 @@ public class Application {
 
 
 
-    public Application() {
-        this.status = "Pending"; //  Default status when a new application is created
-        this.appliedAt = LocalDateTime.now(); //  Automatically set application date
-    }
+//    public Application() {
+//        this.status = "Pending"; //  Default status when a new application is created
+//        this.appliedAt = LocalDateTime.now(); //  Automatically set application date
+//    }
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -68,8 +68,8 @@ public class Application {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDateTime getAppliedAt() { return appliedAt; }
-    public void setAppliedAt(LocalDateTime appliedAt) {this.appliedAt = appliedAt;}
+//    public LocalDateTime getAppliedAt() { return appliedAt; }
+//    public void setAppliedAt(LocalDateTime appliedAt) {this.appliedAt = appliedAt;}
 
     public static class ApplicationRequest{
         private String roomId;

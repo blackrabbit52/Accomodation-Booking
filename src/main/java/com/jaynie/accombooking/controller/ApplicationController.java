@@ -74,11 +74,6 @@ public class ApplicationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdApplication);
     }
 
-    @GetMapping("/user/{userId}/applications")
-    public ResponseEntity<List<Application>> getUserApplications(@PathVariable String userId) {
-        return new ResponseEntity<>(service.getApplicationsByUserId(userId), HttpStatus.OK);
-    }
-
     @GetMapping("/status/{applicationId}")
     public HttpEntity<List<Application>> getApplicationStatus(@PathVariable String status) {
         return new ResponseEntity<>(service.getApplicationStatus(status),HttpStatus.OK);
