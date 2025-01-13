@@ -5,9 +5,8 @@ document.addEventListener("DOMContentLoaded", initialize);
 
 let currentFilters = {
     search: "",
-    maxPrice: "",
     furnished: false,
-    billsIncluded: false
+    billsIncluded: true
 };
 
 /**
@@ -17,7 +16,6 @@ async function fetchRooms() {
     try {
         const queryParams = new URLSearchParams({
             search: currentFilters.search || "",
-            maxPrice: currentFilters.maxPrice || "",
             furnished: currentFilters.furnished ? "true" : "false",
             billsIncluded: currentFilters.billsIncluded ? "true" : "false"
         });
@@ -42,18 +40,37 @@ async function fetchRooms() {
  */
 async function applyFilters() {
     const searchInput = document.getElementById("search").value.trim().toLowerCase();
-    currentFilters.maxPrice = document.getElementById("price-range").value || "";
-    currentFilters.furnished = document.getElementById("furnished").checked;
-    currentFilters.billsIncluded = document.getElementById("bills-included").checked;
+    const furnishedChecked = document.getElementById("furnished").checked;
+    const billsIncludedChecked = document.getElementById("bills-included").checked;
 
-    console.log("🔍 Applying Filters:", currentFilters);
+    console.log("🔍 Applying Filters:", { searchInput, furnishedChecked, billsIncludedChecked });
+
     const data = await fetchRooms();
+    let filteredRooms = data.rooms;
+    //  Apply search filter (check if room name/location contains the input text)
+    if (searchInput) {
+        filteredRooms = filteredRooms.filter(room =>
+            room.location.toLowerCase().includes(searchInput)  //  Partial match search
+        );
+    }
 
-    let filteredRooms = data.rooms.filter(room =>
-        room.location.toLowerCase().startsWith(searchInput)
-    );
+    // Apply furnished filter (if checkbox is checked)
+    if (furnishedChecked) {
+        filteredRooms = filteredRooms.filter(room =>
+            room.details?.furnished?.toString().toLowerCase() === "true"
+        );
+        //console.log(" After Furnished Filter:", filteredRooms);
+    }
 
-    renderRooms(filteredRooms);
+    // Apply bills included filter (if checkbox is checked)
+    if (billsIncludedChecked) {
+        filteredRooms = filteredRooms.filter(room =>
+            room.details?.bills_included?.toString().toLowerCase() === "true"
+        );
+    }
+
+    console.log(" Filtered Rooms:", filteredRooms);
+    renderRooms(filteredRooms); // Call function to update UI
 }
 
 /**
@@ -98,7 +115,7 @@ function renderRooms(rooms) {
             ? room.spokenLanguages.join(", ")
             : "Not specified";
 
-        // ✅ Check Distance Feature
+        //  Check Distance Feature
         const distanceCheck = `
             <div class="distance-checker">
                 <input type="text" id="uni-location-${room.id}" placeholder="Enter university name">
@@ -138,7 +155,7 @@ async function checkDistance(roomId, roomLocation) {
     const uniInput = document.getElementById(`uni-location-${roomId}`).value;
 
     if (!uniInput) {
-        alert("❌ Please enter a university name!");
+        alert("❌ Please enter a Location or Postcode");
         return;
     }
 
@@ -147,7 +164,7 @@ async function checkDistance(roomId, roomLocation) {
         const uniData = await response.json();
 
         if (uniData.length === 0) {
-            document.getElementById(`distance-result-${roomId}`).innerText = "❌ University not found!";
+            document.getElementById(`distance-result-${roomId}`).innerText = "❌ Location not found!";
             return;
         }
 
@@ -164,7 +181,7 @@ async function checkDistance(roomId, roomLocation) {
         const roomCoords = [parseFloat(roomData[0].lat), parseFloat(roomData[0].lon)];
         const distance = calculateDistance(roomCoords[0], roomCoords[1], uniCoords[0], uniCoords[1]);
 
-        document.getElementById(`distance-result-${roomId}`).innerText = `📏 Distance to University: ${distance.toFixed(2)} km`;
+        document.getElementById(`distance-result-${roomId}`).innerText = `📏 Distance to Location: ${distance.toFixed(2)} km`;
     } catch (error) {
         console.error("❌ Error calculating distance:", error);
         document.getElementById(`distance-result-${roomId}`).innerText = "❌ Error retrieving distance!";
@@ -220,13 +237,42 @@ async function applyForRoom(roomId, roomName) {
         if (!response.ok) {
             throw new Error("Failed to submit application");
         }
-
         alert("🎉 Application submitted successfully!");
         localStorage.setItem("appliedRoom", JSON.stringify(applicationData));
         window.location.href = "apply.html";
     } catch (error) {
         console.error("❌ Error submitting application:", error);
     }
+}
+
+/*WebSocket*/
+function initializeWebSocket() {
+    if (typeof SockJS === "undefined" || typeof Stomp === "undefined") {
+        console.error("Missing SockJS or Stomp.js library");
+        return;
+    }
+
+    console.log(" Attempting WebSocket connection");
+
+    const socket = new SockJS("http://localhost:8080/ws");
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log("Connected to WebSocket");
+
+        stompClient.subscribe("/topic/notifications", function (message) {
+            console.log("📢 New Notification Received:", message.body);
+            alert("📢 New Notification: " + message.body);
+        });
+
+    }, function (error) {
+        console.error(" WebSocket Connection Error:", error);
+        console.log(" WebSocket Disconnected.");
+
+        setTimeout(() => {
+            initializeWebSocket();
+        }, 5000);
+    });
 }
 
 /**
@@ -244,3 +290,7 @@ async function initialize() {
         document.getElementById("room-list").innerHTML = "<p>No rooms available.</p>";
     }
 }
+
+
+
+

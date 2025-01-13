@@ -1,6 +1,7 @@
 package com.jaynie.accombooking.controller;
 
 import com.jaynie.accombooking.model.Application;
+import com.jaynie.accombooking.rabbitMq.NotificationPublisher;
 import com.jaynie.accombooking.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,9 +20,13 @@ public class ApplicationController {
     @Autowired
     private final ApplicationService service;
 
+    private final NotificationPublisher notificationPublisher;
+
+
     @Autowired
-    public ApplicationController(ApplicationService service) {
+    public ApplicationController(ApplicationService service, NotificationPublisher notificationPublisher) {
         this.service = service;
+        this.notificationPublisher = notificationPublisher;
     }
 
     @GetMapping("/all")
@@ -71,6 +76,8 @@ public class ApplicationController {
     @PostMapping("/apply")
     public ResponseEntity<Application> createApplication(@RequestBody Application.ApplicationRequest applicationRequest) {
         Application createdApplication = service.createApplication(applicationRequest);
+        String message = "🎉 New application received for room: " + applicationRequest.getRoomId();
+        notificationPublisher.sendNotification(message);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdApplication);
     }
 

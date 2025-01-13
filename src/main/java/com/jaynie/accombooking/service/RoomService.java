@@ -3,11 +3,13 @@ package com.jaynie.accombooking.service;
 import com.jaynie.accombooking.model.Room;
 import com.jaynie.accombooking.repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 @Service
 public class RoomService {
@@ -49,6 +51,7 @@ public class RoomService {
     public Room saveRoom(Room room) {
         return roomRepository.save(room);}
 
+    @CacheEvict(value = "room", key = "#id")
     public void deleteRoomById(String id) {
         if (roomRepository.existsById(id)) {roomRepository.deleteById(id);} else {
             throw new RuntimeException("Room not found with ID: " + id);
@@ -63,9 +66,4 @@ public class RoomService {
         Map<String, Object> weather = weatherService.getWeather(city);
         return weather;
     }
-
-
-
-
-
 }
